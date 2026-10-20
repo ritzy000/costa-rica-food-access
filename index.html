@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlimentaCR - San José Food Security & Local Markets</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        jungle: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        terracotta: {
+                            500: '#e05d38',
+                            600: '#c84724',
+                            700: '#9e3317',
+                        },
+                        sand: '#FAF8F5'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FAF8F5; }
+        h1, h2, h3, h4, .font-display { font-family: 'Outfit', sans-serif; }
+        .active-tab {
+            border-bottom: 3px solid #15803d;
+            color: #15803d;
+            font-weight: 700;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- TOP GLOBAL HEADER -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Branding -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('home')">
+                    <div class="w-10 h-10 rounded-xl bg-jungle-800 text-white flex items-center justify-center font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-leaf text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-extrabold font-display text-jungle-900 tracking-tight">Alimenta<span class="text-terracotta-500">CR</span></span>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest" data-en="San José Food Access" data-es="Acceso Alimentario San José">San José Food Access</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex space-x-1 font-medium text-sm text-slate-600">
+                    <button onclick="switchPage('home')" id="nav-home" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition active-tab" data-en="Overview" data-es="Inicio">Overview</button>
+                    <button onclick="switchPage('history')" id="nav-history" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition" data-en="History" data-es="Historia">History</button>
+                    <button onclick="switchPage('matrix')" id="nav-matrix" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition" data-en="Store Data Map" data-es="Mapeo de Tiendas">Store Data Map</button>
+                    <button onclick="switchPage('store-types')" id="nav-store-types" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition" data-en="Store Types" data-es="Tipos de Tienda">Store Types</button>
+                    <button onclick="switchPage('farmers-market')" id="nav-farmers-market" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition" data-en="Ferias Guide" data-es="Guía de Ferias">Ferias Guide</button>
+                    <button onclick="switchPage('benefits')" id="nav-benefits" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition" data-en="Fresh Produce" data-es="Nutrición">Fresh Produce</button>
+                    <button onclick="switchPage('network')" id="nav-network" class="nav-btn px-3 py-2 rounded-lg hover:text-jungle-800 transition" data-en="Farmers Network" data-es="Red de Agricultores">Farmers Network</button>
+                </nav>
+
+                <!-- Language Toggle & Mobile Menu Btn -->
+                <div class="flex items-center space-x-3">
+                    <!-- EN / ES Toggle -->
+                    <div class="bg-slate-100 p-1 rounded-full flex items-center border border-slate-200">
+                        <button id="lang-en" onclick="setLanguage('en')" class="px-3 py-1 text-xs font-bold rounded-full bg-jungle-800 text-white shadow-sm transition">EN</button>
+                        <button id="lang-es" onclick="setLanguage('es')" class="px-3 py-1 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900 transition">ES</button>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="switchPage('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="Overview" data-es="Inicio">Overview</button>
+            <button onclick="switchPage('history'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="History" data-es="Historia">History</button>
+            <button onclick="switchPage('matrix'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="Store Data Map" data-es="Mapeo de Tiendas">Store Data Map</button>
+            <button onclick="switchPage('store-types'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="Store Types" data-es="Tipos de Tienda">Store Types</button>
+            <button onclick="switchPage('farmers-market'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="Ferias Guide" data-es="Guía de Ferias">Ferias Guide</button>
+            <button onclick="switchPage('benefits'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="Fresh Produce" data-es="Nutrición">Fresh Produce</button>
+            <button onclick="switchPage('network'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md font-medium text-slate-700 hover:bg-emerald-50" data-en="Farmers Network" data-es="Red de Agricultores">Farmers Network</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER WITH DYNAMIC PAGE VIEWS -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= PAGE 1: HOME / OVERVIEW ================= -->
+        <section id="page-home" class="page-view space-y-12">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-br from-jungle-900 via-jungle-800 to-emerald-800 text-white rounded-3xl p-8 sm:p-12 overflow-hidden shadow-xl">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-emerald-300 text-9xl font-bold">
+                    <i class="fa-solid fa-lemon"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" data-en="San José & Zapote Urban Research" data-es="Investigación Urbana San José y Zapote">San José & Zapote Urban Research</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight" data-en="Food Access, Quality & Security in San José" data-es="Acceso, Calidad y Seguridad Alimentaria en San José">Food Access, Quality & Security in San José</h1>
+                    <p class="text-emerald-100 text-base sm:text-lg leading-relaxed" data-en="Understanding how fresh food flows through urban Costa Rica—from local pulperías and weekly ferias to supermarkets. A neighborhood-level research initiative examining price, freshness, and accessibility." data-es="Entendiendo cómo fluyen los alimentos frescos en la Costa Rica urbana: desde pulperías locales y ferias semanales hasta supermercados. Una iniciativa de investigación a nivel de barrio que examina precios, frescura y accesibilidad.">Understanding how fresh food flows through urban Costa Rica—from local pulperías and weekly ferias to supermarkets. A neighborhood-level research initiative examining price, freshness, and accessibility.</p>
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <button onclick="switchPage('matrix')" class="bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5" data-en="Explore Store Data" data-es="Explorar Datos de Tiendas">Explore Store Data</button>
+                        <button onclick="switchPage('farmers-market')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl backdrop-blur-md border border-white/20 transition" data-en="Feria Guide & Tips" data-es="Guía de la Feria">Feria Guide & Tips</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Insight Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-jungle-800 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-slate-900" data-en="Neighborhood Access" data-es="Acceso Barrial">Neighborhood Access</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="In districts like Zapote and San Pedro, corner pulperías provide immediate convenience but often charge 25–40% higher margins on fresh produce compared to weekly farmers markets." data-es="En distritos como Zapote y San Pedro, las pulperías brindan conveniencia inmediata pero a menudo cobran márgenes un 25-40% más altos en productos frescos comparados con las ferias semanales.">In districts like Zapote and San Pedro, corner pulperías provide immediate convenience but often charge 25–40% higher margins on fresh produce compared to weekly farmers markets.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-slate-900" data-en="The Feria Powerhouse" data-es="El Poder de la Feria">The Feria Powerhouse</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Ferias del Agricultor (like the famous Zapote Feria) directly link consumers with regional growers, reducing food miles and offering top-tier nutritional quality at the lowest cost." data-es="Las Ferias del Agricultor (como la de Zapote) conectan consumidores con productores regionales, reduciendo millas de transporte y ofreciendo la mejor calidad al menor precio.">Ferias del Agricultor (like the famous Zapote Feria) directly link consumers with regional growers, reducing food miles and offering top-tier nutritional quality at the lowest cost.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-terracotta-500/10 text-terracotta-600 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-recycle"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-slate-900" data-en="Food Waste Dynamics" data-es="Dinámica del Desperdicio">Food Waste Dynamics</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Post-harvest losses and cosmetic rejection in traditional retail contribute to significant food waste. Local direct distribution helps bypass unnecessary cold-chain rejection." data-es="Pérdidas poscosecha y rechazos estéticos en comercios tradicionales generan gran desperdicio. La distribución directa ayuda a evitar el rechazo innecesario.">Post-harvest losses and cosmetic rejection in traditional retail contribute to significant food waste. Local direct distribution helps bypass unnecessary cold-chain rejection.</p>
+                </div>
+            </div>
+
+            <!-- Project Goals Box -->
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4" data-en="Research Objectives" data-es="Objetivos de la Investigación">Research Objectives</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700">
+                    <div class="flex items-start space-x-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span data-en="Empower San José residents to make cost-effective, high-nutrition decisions." data-es="Empoderar a los residentes de San José para tomar decisiones económicas y nutritivas.">Empower San José residents to make cost-effective, high-nutrition decisions.</span>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span data-en="Map local price disparities across grocery store categories in Zapote & nearby areas." data-es="Mapear las disparidades de precios entre categorías de tiendas en Zapote y áreas cercanas.">Map local price disparities across grocery store categories in Zapote & nearby areas.</span>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span data-en="Promote short supply chains and support Costa Rican smallholder farmers." data-es="Promover cadenas de suministro cortas y apoyar a los pequeños agricultores costarricenses.">Promote short supply chains and support Costa Rican smallholder farmers.</span>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span data-en="Collect community-sourced price and freshness data for ongoing urban food monitoring." data-es="Recolectar datos comunitarios sobre precios y frescura para monitoreo urbano continuo.">Collect community-sourced price and freshness data for ongoing urban food monitoring.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: HISTORY ================= -->
+        <section id="page-history" class="page-view hidden space-y-8">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-extrabold text-jungle-900" data-en="Evolution of the Costa Rican Food Sector" data-es="Evolución del Sector Alimentario en Costa Rica">Evolution of the Costa Rican Food Sector</h2>
+                <p class="text-slate-600 mt-2" data-en="From traditional coffee & banana export hegemony to modernized supermarket chains and protected farmer markets." data-es="De la hegemonía tradicional de exportación de café y banano hacia la modernización de cadenas de supermercados y ferias protegidas.">From traditional coffee & banana export hegemony to modernized supermarket chains and protected farmer markets.</p>
+            </div>
+
+            <!-- Timeline -->
+            <div class="relative border-l-4 border-jungle-700 ml-4 md:ml-32 space-y-12 my-12">
+                
+                <!-- Era 1 -->
+                <div class="relative pl-8 group">
+                    <div class="absolute -left-[18px] top-1 w-8 h-8 rounded-full bg-jungle-800 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-terracotta-500 uppercase tracking-wider" data-en="Pre-1970s" data-es="Antes de 1970">Pre-1970s</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-1" data-en="Agrarian Foundations & The Pulpería Era" data-es="Fundamentos Agrarios y la Era de la Pulpería">Agrarian Foundations & The Pulpería Era</h3>
+                        <p class="text-slate-600 text-sm mt-2 leading-relaxed" data-en="Costa Rican communities relied almost exclusively on neighborhood pulperías for non-perishables and small local plots or central municipal markets (like Mercado Central de San José) for fresh food. Diets revolved around staples: rice, beans, plantains, and seasonal local fruits." data-es="Las comunidades costarricenses dependían casi exclusivamente de pulperías de barrio para no perecederos y del Mercado Central de San José para productos frescos. La dieta giraba en torno al arroz, frijoles, plátanos y frutas de temporada.">Costa Rican communities relied almost exclusively on neighborhood pulperías for non-perishables and small local plots or central municipal markets (like Mercado Central de San José) for fresh food. Diets revolved around staples: rice, beans, plantains, and seasonal local fruits.</p>
+                    </div>
+                </div>
+
+                <!-- Era 2 -->
+                <div class="relative pl-8 group">
+                    <div class="absolute -left-[18px] top-1 w-8 h-8 rounded-full bg-jungle-800 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-terracotta-500 uppercase tracking-wider" data-en="1970s – 1980s" data-es="1970 – 1980">1970s – 1980s</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-1" data-en="Institutionalization of Ferias del Agricultor" data-es="Institucionalización de las Ferias del Agricultor">Institutionalization of Ferias del Agricultor</h3>
+                        <p class="text-slate-600 text-sm mt-2 leading-relaxed" data-en="To protect small farmers from exploitative intermediaries (middlemen) and lower urban food inflation, Law 6130 established the official 'Ferias del Agricultor'. Municipalities designated weekend streets for farmers to sell directly to consumers, drastically improving urban nutrition access." data-es="Para proteger a los pequeños agricultores de intermediarios y bajar la inflación de alimentos urbanos, se crearon oficialmente las 'Ferias del Agricultor'. Los municipios destinaron calles los fines de semana para venta directa.">To protect small farmers from exploitative intermediaries (middlemen) and lower urban food inflation, Law 6130 established the official 'Ferias del Agricultor'. Municipalities designated weekend streets for farmers to sell directly to consumers, drastically improving urban nutrition access.</p>
+                    </div>
+                </div>
+
+                <!-- Era 3 -->
+                <div class="relative pl-8 group">
+                    <div class="absolute -left-[18px] top-1 w-8 h-8 rounded-full bg-jungle-800 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-terracotta-500 uppercase tracking-wider" data-en="1990s – 2010s" data-es="1990 – 2010">1990s – 2010s</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-1" data-en="Supermarket Expansion & Multinational Retail" data-es="Expansión de Supermercados y Cadenas Multinacionales">Supermarket Expansion & Multinational Retail</h3>
+                        <p class="text-slate-600 text-sm mt-2 leading-relaxed" data-en="The supermarket boom transformed Costa Rican urban eating habits. Corporate chains (Walmart, Auto Mercado, Masxmenos, Palí) consolidated retail power. Processed and imported foods grew in prevalence, while mini-supers owned by immigrant families restructured local neighborhood retail." data-es="El auge de los supermercados transformó los hábitos urbanos. Cadenas consolidadas (Walmart, Auto Mercado, Masxmenos, Palí) aumentaron su presencia. Los alimentos procesados e importados crecieron sensiblemente.">The supermarket boom transformed Costa Rican urban eating habits. Corporate chains (Walmart, Auto Mercado, Masxmenos, Palí) consolidated retail power. Processed and imported foods grew in prevalence, while mini-supers owned by immigrant families restructured local neighborhood retail.</p>
+                    </div>
+                </div>
+
+                <!-- Era 4 -->
+                <div class="relative pl-8 group">
+                    <div class="absolute -left-[18px] top-1 w-8 h-8 rounded-full bg-jungle-800 text-white flex items-center justify-center font-bold text-sm shadow">4</div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-terracotta-500 uppercase tracking-wider" data-en="Present Day" data-es="Presente">Present Day</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-1" data-en="Food Sovereignty, Climate Resilience & Urban Access" data-es="Soberanía Alimentaria, Resiliencia Climática y Acceso Urbano">Food Sovereignty, Climate Resilience & Urban Access</h3>
+                        <p class="text-slate-600 text-sm mt-2 leading-relaxed" data-en="Today, urban centers face dual challenges: rising living costs and climate impacts on crop yields in Cartago and Alajuela. Initiatives in San José focus on short food supply chains, organic urban agriculture, and reducing waste in distribution." data-es="Hoy, los centros urbanos enfrentan desafíos dobles: costo de vida creciente e impactos climáticos en cosechas. Las iniciativas en San José se enfocan en cadenas cortas, agricultura orgánica urbana y reducción de desperdicios.">Today, urban centers face dual challenges: rising living costs and climate impacts on crop yields in Cartago and Alajuela. Initiatives in San José focus on short food supply chains, organic urban agriculture, and reducing waste in distribution.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: STORE MAP & DATA MATRIX ================= -->
+        <section id="page-matrix" class="page-view hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-jungle-900" data-en="San José Store Data & Quality Matrix" data-es="Mapeo y Matriz de Calidad en San José">San José Store Data & Quality Matrix</h2>
+                    <p class="text-slate-600 mt-1" data-en="Neighborhood field data collected across 12 stores in Zapote, San Pedro, and Central San José." data-es="Datos de campo recolectados en 12 tiendas en Zapote, San Pedro y San José Centro.">Neighborhood field data collected across 12 stores in Zapote, San Pedro, and Central San José.</p>
+                </div>
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterStores('all')" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-jungle-800 text-white shadow-sm" data-filter="all" data-en="All Outlets" data-es="Todos">All Outlets</button>
+                    <button onclick="filterStores('feria')" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200" data-filter="feria" data-en="Ferias" data-es="Ferias">Ferias</button>
+                    <button onclick="filterStores('pulperia')" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200" data-filter="pulperia" data-en="Pulperías" data-es="Pulperías">Pulperías</button>
+                    <button onclick="filterStores('supermarket')" class="store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200" data-filter="supermarket" data-en="Supermarkets" data-es="Supermercados">Supermarkets</button>
+                </div>
+            </div>
+
+            <!-- Interactive Grid of Stores -->
+            <div id="stores-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically Populated by JavaScript -->
+            </div>
+
+            <!-- Survey Collector Form -->
+            <div class="bg-gradient-to-r from-emerald-900 to-jungle-900 text-white rounded-3xl p-8 shadow-lg mt-12">
+                <div class="max-w-2xl">
+                    <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider" data-en="Citizen Science / Field Research" data-es="Investigación de Campo">Citizen Science / Field Research</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-2" data-en="Add Local Store Field Data" data-es="Añadir Datos de Campo de una Tienda">Add Local Store Field Data</h3>
+                    <p class="text-emerald-100 text-sm mb-6" data-en="Did you visit a store in Zapote or nearby? Submit price and freshness ratings to improve our community dataset." data-es="¿Visitó una tienda en Zapote o zonas cercanas? Envíe sus calificaciones de precio y frescura para enriquecer los datos comunitarios.">Did you visit a store in Zapote or nearby? Submit price and freshness ratings to improve our community dataset.</p>
+                </div>
+
+                <form id="store-form" onsubmit="handleFormSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-slate-800">
+                    <div>
+                        <label class="block text-white text-xs font-semibold mb-1" data-en="Store Name" data-es="Nombre del Establecimiento">Store Name</label>
+                        <input type="text" id="form-name" required placeholder="e.g. Pulpería La Amistad" class="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block text-white text-xs font-semibold mb-1" data-en="Neighborhood / District" data-es="Barrio / Distrito">Neighborhood / District</label>
+                        <select id="form-district" class="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                            <option value="Zapote">Zapote</option>
+                            <option value="San Pedro">San Pedro</option>
+                            <option value="Curridabat">Curridabat</option>
+                            <option value="San José Centro">San José Centro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-white text-xs font-semibold mb-1" data-en="Category" data-es="Categoría">Category</label>
+                        <select id="form-category" class="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                            <option value="pulperia">Pulpería / Corner Store</option>
+                            <option value="minisuper">Mini-super</option>
+                            <option value="supermarket">Supermarket</option>
+                            <option value="feria">Feria del Agricultor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-white text-xs font-semibold mb-1" data-en="Freshness Score (1-5)" data-es="Calificación Frescura (1-5)">Freshness Score (1-5)</label>
+                        <input type="number" id="form-freshness" min="1" max="5" value="4" required class="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+                    <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
+                        <button type="submit" class="bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-md text-sm" data-en="Submit Field Data" data-es="Enviar Datos">Submit Field Data</button>
+                    </div>
+                </form>
+                <div id="form-message" class="hidden mt-4 p-3 bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 rounded-xl text-sm font-semibold"></div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: STORE TYPES ================= -->
+        <section id="page-store-types" class="page-view hidden space-y-8">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-extrabold text-jungle-900" data-en="Understanding Costa Rican Food Retailers" data-es="Comprendiendo los Comercios de Alimentos en Costa Rica">Understanding Costa Rican Food Retailers</h2>
+                <p class="text-slate-600 mt-2" data-en="Each outlet type serves a specific social and economic role in San José neighborhoods." data-es="Cada tipo de comercio cumple un rol social y económico específico en los barrios de San José.">Each outlet type serves a specific social and economic role in San José neighborhoods.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Type 1 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-amber-100 text-amber-800 font-bold text-xs px-3 py-1 rounded-full uppercase" data-en="Micro / Local" data-es="Micro / Local">Micro / Local</span>
+                            <i class="fa-solid fa-house-shop text-2xl text-amber-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-en="Pulpería (Corner Store)" data-es="Pulpería (Tienda de Barrio)">Pulpería (Corner Store)</h3>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed" data-en="The traditional neighborhood staple. Small, family-operated stores located on almost every block. Excellent for immediate convenience, snacks, and single ingredient emergencies, but limited fresh produce and higher unit prices." data-es="El pilar tradicional del barrio. Tiendas pequeñas y familiares ubicadas en casi cada cuadra. Excelentes para conveniencia inmediata, snacks y emergencias, pero con productos frescos limitados y precios unitarios más altos.">The traditional neighborhood staple. Small, family-operated stores located on almost every block. Excellent for immediate convenience, snacks, and single ingredient emergencies, but limited fresh produce and higher unit prices.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-semibold text-slate-500 flex justify-between">
+                        <span data-en="Avg Price: High" data-es="Precio Prom: Alto">Avg Price: High</span>
+                        <span data-en="Fresh Produce: Low" data-es="Prod. Frescos: Bajo">Fresh Produce: Low</span>
+                        <span data-en="Convenience: High" data-es="Conveniencia: Alta">Convenience: High</span>
+                    </div>
+                </div>
+
+                <!-- Type 2 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-blue-100 text-blue-800 font-bold text-xs px-3 py-1 rounded-full uppercase" data-en="Neighborhood Scale" data-es="Escala Barrial">Neighborhood Scale</span>
+                            <i class="fa-solid fa-store text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-en="Mini-Super" data-es="Mini-Súper">Mini-Super</h3>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed" data-en="Mid-sized independent grocery stores offering a broader selection than pulperías. Often open late hours. They carry essential vegetables (onions, potatoes, tomatoes) and packaged goods at moderate price points." data-es="Supermercados independientes de tamaño mediano con mayor selección que las pulperías. Suelen abrir hasta tarde. Ofrecen verduras esenciales (cebollas, papas, tomates) a precios moderados.">Mid-sized independent grocery stores offering a broader selection than pulperías. Often open late hours. They carry essential vegetables (onions, potatoes, tomatoes) and packaged goods at moderate price points.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-semibold text-slate-500 flex justify-between">
+                        <span data-en="Avg Price: Moderate" data-es="Precio Prom: Moderado">Avg Price: Moderate</span>
+                        <span data-en="Fresh Produce: Medium" data-es="Prod. Frescos: Medio">Fresh Produce: Medium</span>
+                        <span data-en="Convenience: Very High" data-es="Conveniencia: Muy Alta">Convenience: Very High</span>
+                    </div>
+                </div>
+
+                <!-- Type 3 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-indigo-100 text-indigo-800 font-bold text-xs px-3 py-1 rounded-full uppercase" data-en="Corporate Chain" data-es="Cadena Corporativa">Corporate Chain</span>
+                            <i class="fa-solid fa-cart-shopping text-2xl text-indigo-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-en="Supermarket (Supermercado)" data-es="Supermercado">Supermarket (Supermercado)</h3>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed" data-en="Ranging from discount outlets (Palí) to premium chains (Auto Mercado). Provide consistent cold chains, vast packaged varieties, and standardized pricing, but produce freshness varies depending on chain distribution networks." data-es="Abarcan desde cadenas de descuento (Palí) hasta cadenas premium (Auto Mercado). Proveen cadena de frío constante y precios estandarizados, pero la frescura de frutas varía según la red de distribución.">Ranging from discount outlets (Palí) to premium chains (Auto Mercado). Provide consistent cold chains, vast packaged varieties, and standardized pricing, but produce freshness varies depending on chain distribution networks.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-semibold text-slate-500 flex justify-between">
+                        <span data-en="Avg Price: Varies" data-es="Precio Prom: Variable">Avg Price: Varies</span>
+                        <span data-en="Fresh Produce: Moderate" data-es="Prod. Frescos: Moderado">Fresh Produce: Moderate</span>
+                        <span data-en="Variety: Highest" data-es="Variedad: Máxima">Variety: Highest</span>
+                    </div>
+                </div>
+
+                <!-- Type 4 -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between ring-2 ring-emerald-500">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full uppercase" data-en="Direct Farmer Market" data-es="Venta Directa">Direct Farmer Market</span>
+                            <i class="fa-solid fa-seedling text-2xl text-emerald-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-en="Feria del Agricultor" data-es="Feria del Agricultor">Feria del Agricultor</h3>
+                        <p class="text-slate-600 text-sm mt-3 leading-relaxed" data-en="Open-air weekend markets regulated by national farmer boards. Unbeatable freshness, lowest produce prices, direct social connection with growers, and rich biodiversity of indigenous Costa Rican crops." data-es="Mercados al aire libre los fines de semana. Frescura imbatible, los precios más bajos en frutas y verduras, conexión directa con productores y gran biodiversidad de cultivos autóctonos.">Open-air weekend markets regulated by national farmer boards. Unbeatable freshness, lowest produce prices, direct social connection with growers, and rich biodiversity of indigenous Costa Rican crops.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 text-xs font-semibold text-slate-500 flex justify-between font-bold text-emerald-700">
+                        <span data-en="Avg Price: Lowest" data-es="Precio Prom: El más bajo">Avg Price: Lowest</span>
+                        <span data-en="Fresh Produce: Peak" data-es="Prod. Frescos: Máxima">Fresh Produce: Peak</span>
+                        <span data-en="Community Value: High" data-es="Valor Social: Alto">Community Value: High</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: FARMERS MARKET GUIDE ================= -->
+        <section id="page-farmers-market" class="page-view hidden space-y-8">
+            <div class="bg-emerald-900 text-white rounded-3xl p-8 sm:p-10 shadow-lg relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="text-emerald-400 font-bold text-xs uppercase tracking-widest" data-en="Mastering the Feria" data-es="Dominando la Feria">Mastering the Feria</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-1" data-en="Guide to Ferias del Agricultor" data-es="Guía de las Ferias del Agricultor">Guide to Ferias del Agricultor</h2>
+                    <p class="text-emerald-100 text-sm sm:text-base mt-2" data-en="Get the freshest Costa Rican tropical fruits at the best price with these field-tested tips for Feria de Zapote and nearby markets." data-es="Consiga las frutas tropicales más frescas al mejor precio con estos consejos probados en la Feria de Zapote y mercados cercanos.">Get the freshest Costa Rican tropical fruits at the best price with these field-tested tips for Feria de Zapote and nearby markets.</p>
+                </div>
+            </div>
+
+            <!-- Pro Tips Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <div class="text-terracotta-500 font-bold text-lg mb-2">01. <span data-en="Timing is Key" data-es="El Momento Clave">Timing is Key</span></div>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="Arrive early (6:00 AM - 7:30 AM) for first pick of delicate berries, avocados, and fresh greens. Arrive late (after 12:00 PM) for end-of-day discounts." data-es="Llegue temprano (6:00 AM - 7:30 AM) para la mejor selección. Llegue tarde (después de las 12:00 PM) para remates y descuentos de cierre.">Arrive early (6:00 AM - 7:30 AM) for first pick of delicate berries, avocados, and fresh greens. Arrive late (after 12:00 PM) for end-of-day discounts.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <div class="text-terracotta-500 font-bold text-lg mb-2">02. <span data-en="Cash & Colones" data-es="Efectivo en Colones">Cash & Colones</span></div>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="Bring small bills (₡1,000 and ₡2,000 colones). Vendors appreciate exact change, and card terminals are rarely available." data-es="Lleve billetes pequeños (₡1,000 y ₡2,000 colones). Los vendedores aprecian el cambio exacto; raramente hay datáfonos disponibles.">Bring small bills (₡1,000 and ₡2,000 colones). Vendors appreciate exact change, and card terminals are rarely available.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <div class="text-terracotta-500 font-bold text-lg mb-2">03. <span data-en="Bring Reusable Bags" data-es="Bolsas Reutilizables">Bring Reusable Bags</span></div>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="Carry sturdy cloth bags or a rolling wheel cart ('carrito de feria') to reduce single-use plastic waste and make hauling heavier produce easier." data-es="Lleve bolsas de tela resistentes o un carrito de feria para reducir plástico de un solo uso y transportar productos pesados con facilidad.">Carry sturdy cloth bags or a rolling wheel cart ('carrito de feria') to reduce single-use plastic waste and make hauling heavier produce easier.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <div class="text-terracotta-500 font-bold text-lg mb-2">04. <span data-en="Seasonal Awareness" data-es="Atención a la Cosecha">Seasonal Awareness</span></div>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="Buy fruit when it is in peak season in Costa Rica. Out-of-season items are imported or greenhouse grown, costing up to 2x more." data-es="Compre fruta cuando esté en temporada alta en Costa Rica. Productos fuera de temporada son importados y cuestan hasta el doble.">Buy fruit when it is in peak season in Costa Rica. Out-of-season items are imported or greenhouse grown, costing up to 2x more.</p>
+                </div>
+            </div>
+
+            <!-- Seasonal Fruit Picker Interactive -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-900" data-en="Costa Rica Seasonal Fruit Calendar" data-es="Calendario Estacional de Frutas en Costa Rica">Costa Rica Seasonal Fruit Calendar</h3>
+                    <p class="text-slate-600 text-sm mt-1" data-en="Select a fruit to check peak availability, pricing expectations, and selection tips." data-es="Seleccione una fruta para consultar disponibilidad alta, expectativas de precio y consejos de selección.">Select a fruit to check peak availability, pricing expectations, and selection tips.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-2" id="fruit-buttons">
+                    <!-- Javascript generated -->
+                </div>
+
+                <!-- Active Fruit Detail Box -->
+                <div id="fruit-detail-card" class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200/80 flex flex-col md:flex-row gap-6 items-center">
+                    <!-- Javascript populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: FRESH PRODUCE BENEFITS ================= -->
+        <section id="page-benefits" class="page-view hidden space-y-8">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-extrabold text-jungle-900" data-en="Why Prioritize Fresh & Local Produce?" data-es="¿Por Qué Priorizar Productos Frescos y Locales?">Why Prioritize Fresh & Local Produce?</h2>
+                <p class="text-slate-600 mt-2" data-en="The health, environmental, and economic benefits of eating fresh native fruits and vegetables in San José." data-es="Los beneficios para la salud, el medio ambiente y la economía al consumir frutas y verduras frescas locales en San José.">The health, environmental, and economic benefits of eating fresh native fruits and vegetables in San José.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-emerald-100 text-jungle-800 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2" data-en="Nutritional Peak" data-es="Máximo Nutricional">Nutritional Peak</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Produce harvested at full maturity and sold quickly retains maximum Vitamin C, antioxidants, and bioavailable micronutrients compared to long-distance imported produce." data-es="Los productos cosechados en madurez óptima y vendidos rápidamente conservan el máximo de Vitamina C y antioxidantes en comparación con importados.">Produce harvested at full maturity and sold quickly retains maximum Vitamin C, antioxidants, and bioavailable micronutrients compared to long-distance imported produce.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2" data-en="Economic Equity" data-es="Equidad Económica">Economic Equity</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Up to 85% of every colon spent at a Feria del Agricultor goes directly to the farming household, compared to less than 30% when purchasing through corporate supermarket chains." data-es="Hasta un 85% de cada colón gastado en la Feria va directamente al agricultor, comparado con menos del 30% en supermercados corporativos.">Up to 85% of every colon spent at a Feria del Agricultor goes directly to the farming household, compared to less than 30% when purchasing through corporate supermarket chains.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                        <i class="fa-solid fa-earth-americas"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2" data-en="Reduced Food Miles" data-es="Menos Millas de Transporte">Reduced Food Miles</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-en="Local supply chains from Cartago, Zarcero, and Alajuela require significantly less refrigeration energy, packaging waste, and carbon emissions to reach San José tables." data-es="Las cadenas locales desde Cartago, Zarcero y Alajuela requieren significativamente menos refrigeración, empaque y emisiones de carbono para llegar a San José.">Local supply chains from Cartago, Zarcero, and Alajuela require significantly less refrigeration energy, packaging waste, and carbon emissions to reach San José tables.</p>
+                </div>
+            </div>
+
+            <!-- Native Tropical Superfoods Box -->
+            <div class="bg-slate-900 text-white p-8 rounded-3xl shadow-md space-y-6">
+                <h3 class="text-2xl font-bold" data-en="Costa Rica's Local Superfoods" data-es="Superalimentos Locales de Costa Rica">Costa Rica's Local Superfoods</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <div class="font-bold text-emerald-400 text-lg">Cas</div>
+                        <p class="text-xs text-slate-300 mt-1" data-en="Native acid guava packed with double the Vitamin C of oranges; supports digestive health." data-es="Guayaba ácida nativa con el doble de Vitamina C que la naranja; apoya la salud digestiva.">Native acid guava packed with double the Vitamin C of oranges; supports digestive health.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <div class="font-bold text-emerald-400 text-lg">Guanábana</div>
+                        <p class="text-xs text-slate-300 mt-1" data-en="Soursop rich in fiber, potassium, and anti-inflammatory acetogenins." data-es="Rica en fibra, potasio y compuestos antiinflamatorios naturales.">Soursop rich in fiber, potassium, and anti-inflammatory acetogenins.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <div class="font-bold text-emerald-400 text-lg">Pejibaye</div>
+                        <p class="text-xs text-slate-300 mt-1" data-en="Peach palm fruit rich in complex carbs, Vitamin A, healthy fats, and fiber." data-es="Fruta de la palma rica en carbohidratos complejos, Vitamina A y grasas saludables.">Peach palm fruit rich in complex carbs, Vitamin A, healthy fats, and fiber.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <div class="font-bold text-emerald-400 text-lg">Carambola</div>
+                        <p class="text-xs text-slate-300 mt-1" data-en="Starfruit loaded with primary antioxidants and hydration electrolytes." data-es="Fruta estrella repleta de antioxidantes primarios y electrólitos de hidratación.">Starfruit loaded with primary antioxidants and hydration electrolytes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 7: FARMERS & SUPPLIERS NETWORK ================= -->
+        <section id="page-network" class="page-view hidden space-y-8">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-extrabold text-jungle-900" data-en="Farmer & Supplier Connect Network" data-es="Red de Contacto con Agricultores y Proveedores">Farmer & Supplier Connect Network</h2>
+                <p class="text-slate-600 mt-2" data-en="Connecting local San José communities, buyers, and urban initiatives directly with regional agricultural producers." data-es="Conectando comunidades de San José, compradores e iniciativas urbanas directamente con productores agrícolas regionales.">Connecting local San José communities, buyers, and urban initiatives directly with regional agricultural producers.</p>
+            </div>
+
+            <!-- Supplier Directory -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Producer 1 -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold bg-emerald-100 text-jungle-800 px-3 py-1 rounded-full uppercase" data-en="Organic Vegetables" data-es="Hortalizas Orgánicas">Organic Vegetables</span>
+                        <span class="text-xs text-slate-500 font-semibold">Zarcero, Alajuela</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900">CoopeZarcero R.L.</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="High-altitude cold crop specialists: carrots, broccoli, cauliflower, and leafy lettuce." data-es="Especialistas en cultivos de altura: zanahorias, brócoli, coliflor y lechuga fresca.">High-altitude cold crop specialists: carrots, broccoli, cauliflower, and leafy lettuce.</p>
+                    <div class="pt-2 text-xs text-slate-500 flex items-center justify-between font-semibold border-t border-slate-100">
+                        <span><i class="fa-solid fa-truck text-emerald-600 mr-1"></i> Zapote Feria (Sats)</span>
+                        <a href="#" class="text-jungle-800 font-bold hover:underline" data-en="Contact" data-es="Contactar">Contact</a>
+                    </div>
+                </div>
+
+                <!-- Producer 2 -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full uppercase" data-en="Tropical Fruits" data-es="Frutas Tropicales">Tropical Fruits</span>
+                        <span class="text-xs text-slate-500 font-semibold">Orotina, Alajuela</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900">Finca Frutales del Pacífico</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="Direct growers of mangoes, papaya, cas, and watermelon. Wholesale and feria retail." data-es="Productores directos de mango, papaya, cas y sandía. Venta al por mayor y feria.">Direct growers of mangoes, papaya, cas, and watermelon. Wholesale and feria retail.</p>
+                    <div class="pt-2 text-xs text-slate-500 flex items-center justify-between font-semibold border-t border-slate-100">
+                        <span><i class="fa-solid fa-truck text-emerald-600 mr-1"></i> San Pedro & Zapote</span>
+                        <a href="#" class="text-jungle-800 font-bold hover:underline" data-en="Contact" data-es="Contactar">Contact</a>
+                    </div>
+                </div>
+
+                <!-- Producer 3 -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-full uppercase" data-en="Urban Garden Init." data-es="Huerta Urbana">Urban Garden Init.</span>
+                        <span class="text-xs text-slate-500 font-semibold">Curridabat, SJ</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900">Huerta Comunitaria Curri</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed" data-en="Neighborhood urban agriculture plot supplying herbs, heirloom tomatoes, and compost." data-es="Huerta urbana comunitaria que suministra hierbas, tomates criollos y compost.">Neighborhood urban agriculture plot supplying herbs, heirloom tomatoes, and compost.</p>
+                    <div class="pt-2 text-xs text-slate-500 flex items-center justify-between font-semibold border-t border-slate-100">
+                        <span><i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i> Curridabat</span>
+                        <a href="#" class="text-jungle-800 font-bold hover:underline" data-en="Contact" data-es="Contactar">Contact</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Form -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm max-w-2xl mx-auto space-y-4">
+                <h3 class="text-2xl font-bold text-slate-900 text-center" data-en="Are you a local producer or organizer?" data-es="¿Es usted un productor local u organizador?">Are you a local producer or organizer?</h3>
+                <p class="text-slate-600 text-sm text-center" data-en="Join our community database to share your market dates and fresh produce offerings with San José neighborhoods." data-es="Únase a nuestra base de datos comunitaria para compartir fechas de venta y ofertas de productos frescos.">Join our community database to share your market dates and fresh produce offerings with San José neighborhoods.</p>
+                
+                <form onsubmit="alert('Thank you! Your information has been registered into our local producer directory.'); return false;" class="space-y-3 pt-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" placeholder="Name / Producer Name" required class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm w-full focus:ring-2 focus:ring-jungle-800 outline-none">
+                        <input type="email" placeholder="Email / Phone" required class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm w-full focus:ring-2 focus:ring-jungle-800 outline-none">
+                    </div>
+                    <textarea placeholder="Tell us about your produce or neighborhood project..." rows="3" required class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm w-full focus:ring-2 focus:ring-jungle-800 outline-none"></textarea>
+                    <button type="submit" class="w-full bg-jungle-800 hover:bg-jungle-900 text-white font-bold py-3 rounded-xl transition text-sm shadow-md" data-en="Register with AlimentaCR" data-es="Registrarse en AlimentaCR">Register with AlimentaCR</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-16 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <p class="font-bold text-white text-sm">AlimentaCR Initiative</p>
+                <p class="mt-1" data-en="San José & Zapote Food Access & Urban Security Research Project." data-es="Proyecto de Investigación sobre Acceso y Seguridad Alimentaria en San José y Zapote.">San José & Zapote Food Access & Urban Security Research Project.</p>
+            </div>
+            <div class="text-center sm:text-right">
+                <p data-en="Hosted freely on GitHub Pages" data-es="Alojado gratuitamente en GitHub Pages">Hosted freely on GitHub Pages</p>
+                <p class="text-slate-500 mt-0.5">Costa Rica • 2026</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // GLOBAL STATE
+        let currentLang = 'en';
+
+        // STORE DATASET (San José & Zapote Area)
+        const storesData = [
+            { id: 1, name: "Feria del Agricultor de Zapote", category: "feria", district: "Zapote", priceTier: "₡", freshness: 5.0, variety: "Very High", notes: "Open Sundays. Direct from regional farmers.", icon: "fa-seedling", bg: "bg-emerald-50" },
+            { id: 2, name: "Pulpería La Palma", category: "pulperia", district: "Zapote", priceTier: "₡₡₡", freshness: 3.2, variety: "Low", notes: "Corner store convenience; high markup on tomatoes/potatoes.", icon: "fa-house-shop", bg: "bg-amber-50" },
+            { id: 3, name: "Super San Pedro", category: "minisuper", district: "San Pedro", priceTier: "₡₡", freshness: 4.0, variety: "Medium", notes: "Good late-night access to staple veggies.", icon: "fa-store", bg: "bg-blue-50" },
+            { id: 4, name: "Auto Mercado Los Yoses", category: "supermarket", district: "San Pedro", priceTier: "₡₡₡₡", freshness: 4.5, variety: "Highest", notes: "High organic selection, premium prices, imported goods.", icon: "fa-cart-shopping", bg: "bg-indigo-50" },
+            { id: 5, name: "Palí Zapote", category: "supermarket", district: "Zapote", priceTier: "₡", freshness: 3.0, variety: "Medium", notes: "Discount prices on dry staples, basic produce section.", icon: "fa-cart-shopping", bg: "bg-slate-50" },
+            { id: 6, name: "Feria de San Pedro", category: "feria", district: "San Pedro", priceTier: "₡", freshness: 4.9, variety: "High", notes: "Saturdays near church. Excellent organic stalls.", icon: "fa-seedling", bg: "bg-emerald-50" },
+            { id: 7, name: "Pulpería El Sol", category: "pulperia", district: "Curridabat", priceTier: "₡₡₡", freshness: 3.5, variety: "Low", notes: "Neighborhood favorite for snacks and quick buys.", icon: "fa-house-shop", bg: "bg-amber-50" },
+            { id: 8, name: "Masxmenos Curridabat", category: "supermarket", district: "Curridabat", priceTier: "₡₡₡", freshness: 4.1, variety: "High", notes: "Standard chain supermarket with weekly produce discounts.", icon: "fa-cart-shopping", bg: "bg-indigo-50" },
+            { id: 9, name: "Mercado Central San José", category: "feria", district: "San José Centro", priceTier: "₡", freshness: 4.7, variety: "Highest", notes: "Historic central market. Top value for tropical fruits.", icon: "fa-basket-shopping", bg: "bg-emerald-50" },
+            { id: 10, name: "Mini-Super El Vergel", category: "minisuper", district: "Zapote", priceTier: "₡₡", freshness: 3.8, variety: "Medium", notes: "Independent store with reliable cassava and plantains.", icon: "fa-store", bg: "bg-blue-50" }
+        ];
+
+        // FRUIT CALENDAR DATASET
+        const fruitData = [
+            {
+                id: 'mamon',
+                name: 'Mamón Chino (Rambutan)',
+                season: 'July – October / Julio – Octubre',
+                price: '₡1,000 - ₡1,500 / kg (In season)',
+                tips: 'Look for bright red hairy skin with flexible tips. Avoid dark brown dried tips.',
+                tipsEs: 'Busque cáscara roja brillante con espinas flexibles. Evite puntas secas de color café.',
+                nutrition: 'Rich in Vitamin C, copper, and natural fruit sugars.'
+            },
+            {
+                id: 'cas',
+                name: 'Cas (Acid Guava)',
+                season: 'Year-Round (Peak: May – Sept)',
+                price: '₡800 - ₡1,200 / kg',
+                tips: 'Choose slightly soft yellow-green fruit for immediate juice blending.',
+                tipsEs: 'Elija frutas verde-amarillas ligeramente suaves para licuar de inmediato.',
+                nutrition: 'Extreme Vitamin C density, aids iron absorption.'
+            },
+            {
+                id: 'mango',
+                name: 'Mango / Manga',
+                season: 'March – June / Marzo – Junio',
+                price: '₡600 - ₡1,000 / kg',
+                tips: 'Fragrant sweet aroma at the stem indicates peak ripeness for eating fresh.',
+                tipsEs: 'Un aroma dulce en el pedúnculo indica madurez óptima para comer fresco.',
+                nutrition: 'Loaded with Beta-Carotene (Vitamin A) and potassium.'
+            },
+            {
+                id: 'pejibaye',
+                name: 'Pejibaye (Peach Palm Fruit)',
+                season: 'September – December / Setiembre – Diciembre',
+                price: '₡1,500 - ₡2,500 / kg (Boiled)',
+                tips: 'Usually sold pre-boiled in salted water. Serve warm with a touch of mayonnaise.',
+                tipsEs: 'Usualmente se vende ya cocinado con sal. Sirva tibio con un toque de mayonesa.',
+                nutrition: 'High complex carbs, Vitamin A, and healthy natural oils.'
+            }
+        ];
+
+        // PAGE SWITCHER LOGIC
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+            // Show target page
+            const target = document.getElementById(`page-${pageId}`);
+            if (target) target.classList.remove('hidden');
+
+            // Update active tab styling
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if (activeNav) activeNav.classList.add('active-tab');
+
+            // Scroll top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // MOBILE MENU TOGGLE
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // LANGUAGE TOGGLE LOGIC
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // Toggle button styles
+            const btnEn = document.getElementById('lang-en');
+            const btnEs = document.getElementById('lang-es');
+
+            if (lang === 'es') {
+                btnEs.className = "px-3 py-1 text-xs font-bold rounded-full bg-jungle-800 text-white shadow-sm transition";
+                btnEn.className = "px-3 py-1 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900 transition";
+            } else {
+                btnEn.className = "px-3 py-1 text-xs font-bold rounded-full bg-jungle-800 text-white shadow-sm transition";
+                btnEs.className = "px-3 py-1 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900 transition";
+            }
+
+            // Translate elements with data-en / data-es attributes
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.textContent = text;
+            });
+
+            // Re-render dynamic elements
+            renderStores('all');
+            renderFruitPicker();
+        }
+
+        // RENDER STORES GRID
+        function renderStores(filter = 'all') {
+            const grid = document.getElementById('stores-grid');
+            grid.innerHTML = '';
+
+            const filtered = storesData.filter(s => filter === 'all' || s.category === filter);
+
+            filtered.forEach(s => {
+                const card = document.createElement('div');
+                card.className = `bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition`;
+
+                // Star rendering for freshness
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= Math.floor(s.freshness)) {
+                        stars += `<i class="fa-solid fa-star text-amber-400"></i>`;
+                    } else if (i - s.freshness < 1) {
+                        stars += `<i class="fa-solid fa-star-half-stroke text-amber-400"></i>`;
+                    } else {
+                        stars += `<i class="fa-regular fa-star text-slate-300"></i>`;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${s.bg} text-slate-700 border border-slate-200">
+                                <i class="fa-solid ${s.icon} mr-1 text-emerald-600"></i> ${s.district}
+                            </span>
+                            <span class="text-xs font-bold text-slate-500">${s.priceTier}</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">${s.name}</h4>
+                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${s.notes}</p>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="block text-slate-400 font-semibold uppercase text-[10px]" data-en="Freshness" data-es="Frescura">Freshness</span>
+                            <div class="flex items-center space-x-1 mt-0.5">
+                                ${stars} <span class="font-bold text-slate-700 ml-1">${s.freshness}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-slate-400 font-semibold uppercase text-[10px]" data-en="Variety" data-es="Variedad">Variety</span>
+                            <span class="font-bold text-slate-800">${s.variety}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // FILTER STORES EVENT
+        function filterStores(category) {
+            document.querySelectorAll('.store-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-filter') === category) {
+                    btn.className = "store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-jungle-800 text-white shadow-sm";
+                } else {
+                    btn.className = "store-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200";
+                }
+            });
+            renderStores(category);
+        }
+
+        // FORM HANDLER FOR FIELD RESEARCH DATA
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('form-name').value;
+            const district = document.getElementById('form-district').value;
+            const category = document.getElementById('form-category').value;
+            const freshness = parseFloat(document.getElementById('form-freshness').value);
+
+            // Add new store item to memory
+            const newStore = {
+                id: storesData.length + 1,
+                name: name,
+                category: category,
+                district: district,
+                priceTier: "₡₡",
+                freshness: freshness,
+                variety: "Medium",
+                notes: "User-submitted neighborhood research entry.",
+                icon: category === 'feria' ? 'fa-seedling' : 'fa-store',
+                bg: 'bg-emerald-50'
+            };
+
+            storesData.unshift(newStore);
+            renderStores('all');
+
+            // Show feedback
+            const msg = document.getElementById('form-message');
+            msg.textContent = currentLang === 'es' ? '¡Gracias! Sus datos de campo han sido registrados y agregados a la matriz superior.' : 'Thank you! Your field survey data has been recorded and added to the top matrix.';
+            msg.classList.remove('hidden');
+
+            // Reset Form
+            document.getElementById('store-form').reset();
+            setTimeout(() => msg.classList.add('hidden'), 5000);
+        }
+
+        // RENDER FRUIT PICKER
+        let selectedFruitIndex = 0;
+
+        function renderFruitPicker() {
+            const btnContainer = document.getElementById('fruit-buttons');
+            btnContainer.innerHTML = '';
+
+            fruitData.forEach((fruit, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-xl text-xs font-bold transition ${idx === selectedFruitIndex ? 'bg-jungle-800 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`;
+                btn.textContent = fruit.name;
+                btn.onclick = () => {
+                    selectedFruitIndex = idx;
+                    renderFruitPicker();
+                };
+                btnContainer.appendChild(btn);
+            });
+
+            // Render Detail Card
+            const active = fruitData[selectedFruitIndex];
+            const detailBox = document.getElementById('fruit-detail-card');
+            
+            detailBox.innerHTML = `
+                <div class="w-16 h-16 rounded-2xl bg-emerald-200 text-jungle-800 flex items-center justify-center text-3xl font-bold flex-shrink-0">
+                    <i class="fa-solid fa-lemon"></i>
+                </div>
+                <div class="space-y-2 flex-grow">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+                        <h4 class="text-xl font-bold text-slate-900">${active.name}</h4>
+                        <span class="text-xs font-bold text-terracotta-600 bg-terracotta-500/10 px-3 py-1 rounded-full mt-1 sm:mt-0 inline-block w-fit">${active.season}</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-600"><i class="fa-solid fa-tag text-emerald-600 mr-1"></i> ${active.price}</p>
+                    <p class="text-slate-700 text-xs leading-relaxed"><strong>${currentLang === 'es' ? 'Consejo de Selección:' : 'Selection Tip:'}</strong> ${currentLang === 'es' ? active.tipsEs : active.tips}</p>
+                    <p class="text-slate-500 text-xs"><strong>${currentLang === 'es' ? 'Valor Nutricional:' : 'Nutrition:'}</strong> ${active.nutrition}</p>
+                </div>
+            `;
+        }
+
+        // INITIALIZATION
+        window.onload = function() {
+            renderStores('all');
+            renderFruitPicker();
+        };
+    </script>
+</body>
+</html>
